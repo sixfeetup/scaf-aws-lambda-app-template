@@ -1,0 +1,4 @@
+requests
+{% if copier__auth %}
+passage-identity
+{% endif %}

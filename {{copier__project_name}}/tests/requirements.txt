@@ -1,0 +1,6 @@
+pytest
+boto3
+requests
+{% if copier__package_type == "image" %}
+pytest-mock
+{% endif %}
