@@ -3,7 +3,7 @@ _templates_suffix: ""
 
 copier__project_name:
   type: str
-  default: "sam-app"
+  default: "{{ is_project_slug if is_project_slug else copier__project_name }}"
   help: "The name of your project."
   validator: >-
     {% if not copier__project_name.strip() %}
