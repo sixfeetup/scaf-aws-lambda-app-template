@@ -1,6 +1,10 @@
 # Copier configuration/questions for "AWS cli Template"
 _templates_suffix: ""
 
+_tasks:
+  - cd {{ copier__project_name }} && python ../tasks.py
+  - rm tasks.py
+
 copier__project_name:
   type: str
   default: "{{ is_project_slug if is_project_slug else copier__project_name }}"
@@ -43,7 +47,6 @@ copier__xray_tracing:
   type: bool
   help: "Would you like to enable X-Ray tracing on the function(s) in your application? (y/N) [default: No]"
   default: false
-
 
 copier__cloudwatch_monitor:
   type: bool

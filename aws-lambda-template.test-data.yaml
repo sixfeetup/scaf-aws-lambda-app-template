@@ -1,0 +1,8 @@
+copier__project_name: test_project
+copier__runtime: "python3.11"
+copier__architectures: ["x86_64"]
+copier__package_type: "zip"
+copier__xray_tracing: y
+copier__cloudwatch_monitor: y
+copier__enable_logs: y
+copier__auth: y
