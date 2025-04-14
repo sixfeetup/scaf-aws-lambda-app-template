@@ -102,34 +102,18 @@ The SAM CLI reads the application template to determine the API's routes and the
 ## Running DynamoDB Locally with AWS SAM
 
 Follow these steps to configure and run DynamoDB locally for development:
-1. Start DynamoDB Local using Docker
+1. Start DynamoDB Local setup and create Table
 ```bash
-docker run -p 8000:8000 \
-  --network=local-api-network \
-  --name dynamo-local \
-  amazon/dynamodb-local
-```
-2. Create the DynamoDB Table
-
-```bash
-aws dynamodb create-table \
-  --table-name RequestsTable \
-  --attribute-definitions \
-      AttributeName=ip_address,AttributeType=S \
-      AttributeName=timestamp,AttributeType=S \
-  --key-schema \
-      AttributeName=ip_address,KeyType=HASH \
-      AttributeName=timestamp,KeyType=RANGE \
-  --billing-mode PAY_PER_REQUEST \
-  --endpoint-url http://localhost:8000
+make setup
 ```
 
-3. Build and Run the API Locally with AWS SAM
+2. Build and Run the API Locally with AWS SAM
 ```bash
-sam build && sam local start-api --env-vars env_example.json --docker-network local-api-network
+make build
+make local
 ```
 
-4. Hit the API:
+3. Hit the API:
 ```bash
 curl http://localhost:3000/hello
 ```
