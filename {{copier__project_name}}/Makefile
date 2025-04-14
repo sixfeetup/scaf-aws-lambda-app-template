@@ -16,6 +16,11 @@ build:
 deploy:
 	sam deploy --guided
 
+deploy-sandbox:
+	sam deploy --stack-name $(STACK_NAME)-sandbox \
+        	--capabilities CAPABILITY_IAM \
+        	--parameter-overrides StageName=sandbox
+
 local:
 	sam local start-api {% if copier__dynamo_db %}--env-vars env_example.json --docker-network lambda-local{% endif %}
 
