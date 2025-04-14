@@ -74,6 +74,11 @@ copier__auth:
   help: "Do you want to enable authentication for your project? (y/n) [default: No]"
   default: false
 
+copier__dynamo_db:
+  type: bool
+  help: "Do you want to enable DynamoDB for your project? (y/n) [default: No]"
+  default: false
+
 copier__stack_name:
   type: str
   default: "{{ copier__project_name.lower().replace(' ', '-') }}"

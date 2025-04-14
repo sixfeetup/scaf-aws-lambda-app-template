@@ -98,6 +98,45 @@ The SAM CLI reads the application template to determine the API's routes and the
             Path: /hello
             Method: get
 ```
+{% if copier__dynamo_db %}
+## Running DynamoDB Locally with AWS SAM
+
+Follow these steps to configure and run DynamoDB locally for development:
+1. Start DynamoDB Local using Docker
+```bash
+docker run -p 8000:8000 \
+  --network=local-api-network \
+  --name dynamo-local \
+  amazon/dynamodb-local
+```
+2. Create the DynamoDB Table
+
+```bash
+aws dynamodb create-table \
+  --table-name RequestsTable \
+  --attribute-definitions \
+      AttributeName=ip_address,AttributeType=S \
+      AttributeName=timestamp,AttributeType=S \
+  --key-schema \
+      AttributeName=ip_address,KeyType=HASH \
+      AttributeName=timestamp,KeyType=RANGE \
+  --billing-mode PAY_PER_REQUEST \
+  --endpoint-url http://localhost:8000
+```
+
+3. Build and Run the API Locally with AWS SAM
+```bash
+sam build && sam local start-api --env-vars env_example.json --docker-network local-api-network
+```
+
+4. Hit the API:
+```bash
+curl http://localhost:3000/hello
+```
+
+You should receive a success response.
+{%- endif %}
+
 
 ## Add a resource to your application
 The application template uses AWS Serverless Application Model (AWS SAM) to define application resources. AWS SAM is an extension of AWS CloudFormation with a simpler syntax for configuring common serverless application resources such as functions, triggers, and APIs. For resources not included in [the SAM specification](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md), you can use standard [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) resource types.

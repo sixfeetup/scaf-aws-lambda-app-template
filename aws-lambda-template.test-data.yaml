@@ -6,3 +6,4 @@ copier__xray_tracing: y
 copier__cloudwatch_monitor: y
 copier__enable_logs: y
 copier__auth: y
+copier__dynamo_db: y
