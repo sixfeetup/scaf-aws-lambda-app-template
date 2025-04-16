@@ -27,7 +27,7 @@ copier__project_name:
 
 copier__runtime:
   type: str
-  default: "python3.13"
+  default: "python3.11"
   help: "The python version of your project."
   choices:
     python3.8: "python3.8"
