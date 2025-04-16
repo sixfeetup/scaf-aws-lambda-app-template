@@ -35,12 +35,11 @@ copier__runtime:
     python3.10: "python3.10"
     python3.11: "python3.11"
     python3.12: "python3.12"
-    python3.13: "python3.13"
 
 copier__architectures:
   type: str
   help: "The architecture of your project."
-  default: "arm64"
+  default: ["arm64"]
   multiselect: true
   choices:
     x86_64: "x86_64"
