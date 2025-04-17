@@ -1,4 +1,3 @@
 requests
-{% if copier__auth %}
-passage-identity
-{% endif %}
+boto3
+{% if copier__auth %}passage-identity{% endif %}

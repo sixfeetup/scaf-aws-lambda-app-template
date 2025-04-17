@@ -8,7 +8,7 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 10
     {%- if copier__xray_tracing %}
     Tracing: Active
     {%- endif %}
@@ -22,16 +22,34 @@ Globals:
     TracingEnabled: true
   {%- endif %}
 Resources:
-  {% if copier__auth %}
   HelloWorldAPI:
     Type: AWS::Serverless::Api
     Properties:
       StageName: Prod
+      {% if copier__auth %}
       Auth:
         DefaultAuthorizer: PassageTokenAuthorizer
         Authorizers:
           PassageTokenAuthorizer:
             FunctionArn: !GetAtt PassageAuthFunction.Arn
+  {% endif %}
+  {% if copier__dynamo_db %}
+  # DynamoDB Table definition
+  RequestsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: RequestsTable
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: ip_address
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ip_address
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
   {% endif %}
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -47,6 +65,15 @@ Resources:
       {%- for arch in copier__architectures %}
       - {{arch}}
       {%- endfor %}
+      {% if copier__dynamo_db %}
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref RequestsTable
+          DYNAMODB_ENDPOINT: ""
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RequestsTable
+      {% endif %}
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -89,6 +116,12 @@ Resources:
         Variables:
           PASSAGE_APP_ID: dummy
           PASSAGE_API_KEY: dummy
+      {% if copier__dynamo_db %}
+          DYNAMODB_TABLE_NAME: !Ref RequestsTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref RequestsTable
+      {% endif %}
   {% endif %}
 
 Outputs:
@@ -111,3 +144,8 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: Implicit IAM Role created for Hello World function
     Value: !GetAtt HelloWorldFunctionRole.Arn
+  {% if copier__dynamo_db %}
+  RequestsTable:
+    Description: Name of the DynamoDB table created for user data
+    Value: !Ref RequestsTable
+  {% endif %}

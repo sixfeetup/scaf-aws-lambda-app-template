@@ -1,9 +1,24 @@
 # Copier configuration/questions for "AWS cli Template"
 _templates_suffix: ""
 
+_tasks:
+  - cd {{ copier__project_name }} && python ../tasks.py
+  - rm tasks.py
+
+_exclude:
+  - "copier.yaml"
+  - "copier.yml"
+  - "~*"
+  - "*.py[co]"
+  - "__pycache__"
+  - ".git"
+  - ".DS_Store"
+  - ".svn"
+  - "*.test-data.yaml"
+
 copier__project_name:
   type: str
-  default: "sam-app"
+  default: "{{ is_project_slug if is_project_slug else copier__project_name }}"
   help: "The name of your project."
   validator: >-
     {% if not copier__project_name.strip() %}
@@ -12,7 +27,7 @@ copier__project_name:
 
 copier__runtime:
   type: str
-  default: "python3.13"
+  default: "python3.11"
   help: "The python version of your project."
   choices:
     python3.8: "python3.8"
@@ -20,12 +35,11 @@ copier__runtime:
     python3.10: "python3.10"
     python3.11: "python3.11"
     python3.12: "python3.12"
-    python3.13: "python3.13"
 
 copier__architectures:
   type: str
   help: "The architecture of your project."
-  default: "arm64"
+  default: ["arm64"]
   multiselect: true
   choices:
     x86_64: "x86_64"
@@ -44,7 +58,6 @@ copier__xray_tracing:
   help: "Would you like to enable X-Ray tracing on the function(s) in your application? (y/N) [default: No]"
   default: false
 
-
 copier__cloudwatch_monitor:
   type: bool
   help: "Would you like to enable monitoring using CloudWatch Application Insights? (y/N) [default: No]"
@@ -58,6 +71,11 @@ copier__enable_logs:
 copier__auth:
   type: bool
   help: "Do you want to enable authentication for your project? (y/n) [default: No]"
+  default: false
+
+copier__dynamo_db:
+  type: bool
+  help: "Do you want to enable DynamoDB for your project? (y/n) [default: No]"
   default: false
 
 copier__stack_name:
