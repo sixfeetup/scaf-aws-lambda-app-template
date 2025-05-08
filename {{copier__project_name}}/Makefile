@@ -85,5 +85,8 @@ setup: dynamo-up wait-for-dynamodb create-table{% else %}
 setup:
 	pip install -r requirements.txt{% endif %}
 
+delete-sandbox:
+	sam delete --stack-name $(STACK_NAME)-sandbox
+
 delete:
 	sam delete --stack-name $(STACK_NAME)
