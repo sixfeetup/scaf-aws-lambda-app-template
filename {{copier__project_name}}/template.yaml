@@ -76,9 +76,7 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-            {% if copier__auth %}
             RestApiId: !Ref HelloWorldAPI
-            {% endif %}
     {% if copier__package_type == "image" %}
     Metadata:
       Dockerfile: Dockerfile
