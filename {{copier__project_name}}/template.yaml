@@ -57,7 +57,7 @@ Resources:
       {% else %}
       CodeUri: ./src
       Handler: app.lambda_handler
-      Runtime: {{ copier__runtime }}
+      Runtime: python{{ copier__runtime }}
       {% endif %}
       Architectures:
         - {{copier__architectures}}
@@ -83,7 +83,7 @@ Resources:
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./src
-      DockerTag: {{copier__runtime}}-v1
+      DockerTag: python{{copier__runtime}}-v1
     {% endif %}
   {% if copier__cloudwatch_monitor %}
   ApplicationResourceGroup:
@@ -106,7 +106,7 @@ Resources:
     Properties:
       CodeUri: ./src
       Handler: authorizer.handler
-      Runtime: {{ copier__runtime }}
+      Runtime: python{{ copier__runtime }}
       Timeout: 10
       Environment:
         Variables:

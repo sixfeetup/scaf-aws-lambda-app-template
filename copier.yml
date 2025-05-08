@@ -27,13 +27,13 @@ copier__project_name:
 
 copier__runtime:
   type: str
-  default: "python3.11"
+  default: "3.11"
   help: "The python version of your project."
   choices:
-    "3.9": "python3.9"
-    "3.10": "python3.10"
-    "3.11": "python3.11"
-    "3.12": "python3.12"
+    "3.9": "3.9"
+    "3.10": "3.10"
+    "3.11": "3.11"
+    "3.12": "3.12"
 
 copier__architectures:
   type: str
@@ -75,6 +75,11 @@ copier__dynamo_db:
   type: bool
   help: "Do you want to enable DynamoDB for your project? (y/n) [default: No]"
   default: false
+
+copier__aws_region:
+  type: str
+  default: "us-east-1"
+  help: "The AWS region where your project will be deployed."
 
 copier__stack_name:
   type: str

@@ -2,7 +2,7 @@
 
 # Configuration
 STACK_NAME ?= {{ copier__project_name }}
-REGION ?= us-east-1
+REGION ?= {{copier__aws_region}}
 TEMPLATE_FILE ?= template.yaml
 BUILD_DIR ?= .aws-sam/build
 {% if copier__dynamo_db %}DYNAMO_ENDPOINT ?= http://localhost:8000{% endif %}
