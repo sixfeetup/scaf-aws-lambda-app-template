@@ -30,17 +30,15 @@ copier__runtime:
   default: "python3.11"
   help: "The python version of your project."
   choices:
-    python3.8: "python3.8"
-    python3.9: "python3.9"
-    python3.10: "python3.10"
-    python3.11: "python3.11"
-    python3.12: "python3.12"
+    "3.9": "python3.9"
+    "3.10": "python3.10"
+    "3.11": "python3.11"
+    "3.12": "python3.12"
 
 copier__architectures:
   type: str
   help: "The architecture of your project."
-  default: ["arm64"]
-  multiselect: true
+  default: "arm64"
   choices:
     x86_64: "x86_64"
     arm64: "arm64"
@@ -82,3 +80,13 @@ copier__stack_name:
   type: str
   default: "{{ copier__project_name.lower().replace(' ', '-') }}"
   when: false
+
+copier__repo_url:
+  type: str
+  default: "git@github.com:organization_name/{{ copier__stack_name }}.git"
+  help: "The URL of the repository."
+  validator: >-
+    {% if not copier__repo_url.startswith("git@") or not ":" in copier__repo_url or not "/" in copier__repo_url.split(":")[1] or not ".git" in copier__repo_url %}
+      Value must follow the format git@provider:orgname/repo.git
+    {% endif %}
+
