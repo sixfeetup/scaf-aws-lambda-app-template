@@ -1,11 +1,12 @@
 {
-  "HelloWorldFunction": {
-    "DYNAMODB_ENDPOINT": "http://dynamodb-local:8000",
-    "DYNAMODB_TABLE_NAME": "RequestsTable"
-  },
+  {% if copier__auth %}
   "PassageAuthFunction": {
     "PASSAGE_APP_ID": "CHANGEME",
     "PASSAGE_API_KEY": "CHANGEME",
+    "DYNAMODB_ENDPOINT": "http://dynamodb-local:8000",
+    "DYNAMODB_TABLE_NAME": "RequestsTable"
+  },{% endif %}
+  "HelloWorldFunction": {
     "DYNAMODB_ENDPOINT": "http://dynamodb-local:8000",
     "DYNAMODB_TABLE_NAME": "RequestsTable"
   }
