@@ -1,9 +1,10 @@
 copier__project_name: test_project
 copier__runtime: "python3.11"
-copier__architectures: ["x86_64"]
-copier__package_type: "zip"
+copier__architectures: "x86_64"
+copier__package_type: "image"
 copier__xray_tracing: y
 copier__cloudwatch_monitor: y
 copier__enable_logs: y
 copier__auth: y
 copier__dynamo_db: y
+copier__repo_url: git@github.com:organization_name/test_project.git

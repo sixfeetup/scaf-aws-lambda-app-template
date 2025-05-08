@@ -1,3 +1,7 @@
+# Project specific ignores
+
+env.json
+.dynamodb-container-id
 
 # Created by https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 
@@ -242,3 +246,9 @@ $RECYCLE.BIN/
 */build/*
 
 # End of https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
+
+# gitignore template for AWS Serverless Application Model project
+# website: https://docs.aws.amazon.com/serverless-application-model
+
+# Ignore build folder
+.aws-sam/
