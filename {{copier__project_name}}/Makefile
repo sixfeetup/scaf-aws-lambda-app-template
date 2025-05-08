@@ -14,6 +14,9 @@ all: build
 build:
 	sam build {% if copier__package_type != "image" %}--use-container{% endif %}
 
+validate:
+	sam validate --lint
+
 deploy:
 	sam deploy --guided
 
@@ -35,7 +38,7 @@ dynamo-up:
 	else \
 		echo "Starting DynamoDB local container..."; \
 		rm -f .dynamodb-container-id 2>/dev/null || true; \
-		docker run -d --rm -p 8000:8000 --name dynamodb-local amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb > .dynamodb-container-id; \
+		docker run -d --rm --network lambda-local -p 8000:8000 --name dynamodb-local amazon/dynamodb-local:latest -jar DynamoDBLocal.jar -sharedDb > .dynamodb-container-id; \
 		echo "DynamoDB local container started with ID: $$(cat .dynamodb-container-id)"; \
 	fi
 
@@ -52,13 +55,31 @@ dynamo-down:
 		echo "No container ID file found"; \
 	fi
 
+wait-for-dynamodb:
+	@echo "Waiting for DynamoDB Local to be ready..."
+	@attempts=0; \
+	until curl -s http://localhost:8000 >/dev/null; do \
+		if [ $$attempts -ge 10 ]; then \
+			echo "DynamoDB Local did not become ready in time"; \
+			exit 1; \
+		fi; \
+		echo "Waiting..."; \
+		sleep 1; \
+		attempts=$$((attempts + 1)); \
+	done; \
+	echo "DynamoDB Local is ready."
+
 create-table:
 	@# Store the AWS command output in a variable
 	$(eval AWS_OUTPUT := $(shell aws dynamodb create-table \
 		--table-name $(TABLE_NAME) \
-		--attribute-definitions AttributeName=id,AttributeType=S \
-		--key-schema AttributeName=id,KeyType=HASH \
-		--provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+		--attribute-definitions \
+		AttributeName=ip_address,AttributeType=S \
+		AttributeName=timestamp,AttributeType=S \
+		--key-schema \
+		AttributeName=ip_address,KeyType=HASH \
+		AttributeName=timestamp,KeyType=RANGE \
+		--billing-mode PAY_PER_REQUEST \
 		--endpoint-url $(DYNAMO_ENDPOINT) \
 		--no-cli-pager))
 
@@ -70,7 +91,7 @@ create-table:
 		echo "\033[33mNote: Install jq for colorized JSON output\033[0m"; \
 	fi
 
-setup: dynamo-up create-table{% else %}
+setup: dynamo-up wait-for-dynamodb create-table{% else %}
 setup:
 	pip install -r requirements.txt{% endif %}
 
