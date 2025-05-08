@@ -5,7 +5,7 @@ copier__package_type: "image"
 copier__xray_tracing: y
 copier__cloudwatch_monitor: y
 copier__enable_logs: y
-copier__auth: y
+copier__auth: n
 copier__dynamo_db: y
 copier__aws_region: us-east-1
 copier__repo_url: git@github.com:organization_name/test_project.git

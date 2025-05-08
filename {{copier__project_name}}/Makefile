@@ -1,7 +1,7 @@
 .PHONY: build deploy local clean test setup{% if copier__dynamo_db %} dynamo-up dynamo-down create-table{% endif %}
 
 # Configuration
-STACK_NAME ?= {{ copier__project_name }}
+STACK_NAME ?= {{ copier__stack_name }}
 REGION ?= {{copier__aws_region}}
 TEMPLATE_FILE ?= template.yaml
 BUILD_DIR ?= .aws-sam/build
@@ -22,7 +22,8 @@ deploy:
 deploy-sandbox:
 	sam deploy --stack-name $(STACK_NAME)-sandbox \
         	--capabilities CAPABILITY_IAM \
-        	--parameter-overrides StageName=sandbox
+        	--parameter-overrides StageName=sandbox \
+			{% if copier__package_type == "image" %}--resolve-image-repos{% endif %}
 
 local:
 	sam local start-api {% if copier__dynamo_db %}--env-vars env_example.json --docker-network lambda-local{% endif %}
