@@ -5,7 +5,10 @@ STACK_NAME ?= {{ copier__stack_name }}
 REGION ?= {{copier__aws_region}}
 TEMPLATE_FILE ?= template.yaml
 BUILD_DIR ?= .aws-sam/build
-{% if copier__dynamo_db %}DYNAMO_ENDPOINT ?= http://localhost:8000{% endif %}
+{% if copier__dynamo_db %}
+DYNAMO_ENDPOINT ?= http://localhost:8000
+TABLE_NAME = RequestsTable
+{% endif %}
 
 # Default target
 all: build
