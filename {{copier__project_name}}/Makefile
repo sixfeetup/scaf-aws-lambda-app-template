@@ -45,9 +45,6 @@ dynamo-up:
 		echo "DynamoDB local container started with ID: $$(cat .dynamodb-container-id)"; \
 	fi
 
-dynamo-down:
-	dokcer-compose down
-
 wait-for-dynamodb:
 	@echo "Waiting for DynamoDB Local to be ready..."
 	@attempts=0; \
