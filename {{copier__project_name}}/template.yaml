@@ -125,7 +125,6 @@ Outputs:
   HelloWorldApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
     Value: !Sub "https://${HelloWorldAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  {% endif %}
 
   HelloWorldFunction:
     Description: Hello World Lambda Function ARN
