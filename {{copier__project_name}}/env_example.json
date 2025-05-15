@@ -4,10 +4,10 @@
     "PASSAGE_APP_ID": "CHANGEME",
     "PASSAGE_API_KEY": "CHANGEME",
     "DYNAMODB_ENDPOINT": "http://dynamodb-local:8000",
-    "DYNAMODB_TABLE_NAME": "RequestsTable"
+    "DYNAMODB_TABLE_NAME": "RequestsTable-{{copier__stack_name}}"
   },{% endif %}
   "HelloWorldFunction": {
     "DYNAMODB_ENDPOINT": "http://dynamodb-local:8000",
-    "DYNAMODB_TABLE_NAME": "RequestsTable"
+    "DYNAMODB_TABLE_NAME": "RequestsTable-{{copier__stack_name}}"
   }
 }

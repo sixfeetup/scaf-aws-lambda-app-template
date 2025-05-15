@@ -86,6 +86,11 @@ copier__stack_name:
   default: "{{ copier__project_name.lower().replace(' ', '-').replace('_', '-') }}"
   when: false
 
+copier__aws_profile:
+  type: str
+  default: "default"
+  help: "The AWS profile to use for deployment."
+
 copier__repo_url:
   type: str
   default: "git@github.com:organization_name/{{ copier__stack_name }}.git"

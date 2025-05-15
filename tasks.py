@@ -47,11 +47,22 @@ def configure_git_remote():
             + TERMINATOR
         )
 
+def log_next_steps():
+    print(
+        HINT
+        + "Next steps:"
+        + "\n1. run 'make setup' to run dynamodb locally and create the database"
+        + "\n2. then run 'make build' to build the lambda function"
+        + "\n3. the run 'make deploy' to deploy the lambda function" 
+        + "\nRefer to Readme.md for more details."
+        + TERMINATOR
+    )
 
 def main():
     init_git_repo()
     configure_git_remote()
     run_setup()
+    log_next_steps()
 
 
 if __name__ == "__main__":

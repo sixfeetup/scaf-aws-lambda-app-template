@@ -19,6 +19,7 @@ confirm_changeset = true
 resolve_s3 = true
 s3_prefix = "{{copier__stack_name}}"
 region = "{{copier__aws_region}}"
+profile = "{{copier__aws_profile}}"
 image_repositories = []
 parameter_overrides = "DynamoDbEndpoint=\"https://dynamodb.{{copier__aws_region}}.amazonaws.com\""
 

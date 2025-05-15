@@ -7,7 +7,7 @@ TEMPLATE_FILE ?= template.yaml
 BUILD_DIR ?= .aws-sam/build
 {% if copier__dynamo_db %}
 DYNAMO_ENDPOINT ?= http://localhost:8000
-TABLE_NAME = RequestsTable
+TABLE_NAME ?= RequestsTable-{{copier__stack_name}}
 {% endif %}
 
 # Default target
@@ -20,13 +20,13 @@ validate:
 	sam validate --lint
 
 deploy:
-	sam deploy --guided
+	sam deploy --guided --profile {{copier__aws_profile}}
 
 deploy-sandbox:
 	sam deploy --stack-name $(STACK_NAME)-sandbox \
         	--capabilities CAPABILITY_IAM \
         	--parameter-overrides StageName=sandbox \
-			{% if copier__package_type == "image" %}--resolve-image-repos{% endif %}
+			{% if copier__package_type != "image" %}--resolve-image-repos{% endif %}
 
 local:
 	sam local start-api {% if copier__dynamo_db %}--env-vars env_example.json --docker-network lambda-local{% endif %}
@@ -36,7 +36,13 @@ invoke:
 
 {% if copier__dynamo_db %}
 dynamo-up:
-	@if [ -f .dynamodb-container-id ] && [ -n "$$(docker ps -q -f id=$$(cat .dynamodb-container-id 2>/dev/null))" ]; then \
+	@if [ -z "$$(docker network ls --filter name=^lambda-local$$ -q)" ]; then \
+		echo "Creating Docker network 'lambda-local'..."; \
+		docker network create lambda-local; \
+	else \
+		echo "Docker network 'lambda-local' already exists."; \
+	fi; \
+	if [ -f .dynamodb-container-id ] && [ -n "$$(docker ps -q -f id=$$(cat .dynamodb-container-id 2>/dev/null))" ]; then \
 		echo "DynamoDB local container is already running with ID: $$(cat .dynamodb-container-id)"; \
 	else \
 		echo "Starting DynamoDB local container..."; \
@@ -70,8 +76,7 @@ create-table:
 		AttributeName=ip_address,KeyType=HASH \
 		AttributeName=timestamp,KeyType=RANGE \
 		--billing-mode PAY_PER_REQUEST \
-		--endpoint-url $(DYNAMO_ENDPOINT) \
-		--no-cli-pager))
+		--endpoint-url $(DYNAMO_ENDPOINT)))
 
 	@# Check if jq exists and use it if available
 	@if command -v jq > /dev/null 2>&1; then \
