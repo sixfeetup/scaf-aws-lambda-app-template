@@ -1,8 +1,9 @@
 import json
+import os
 
 import pytest
 
-from hello_world import app
+from src import app
 
 
 @pytest.fixture()
@@ -63,6 +64,9 @@ def apigw_event():
 
 
 def test_lambda_handler(apigw_event, mocker):
+    dynamodb_mock = mocker.MagicMock()
+    mocker.patch.object(app, 'get_dynamodb_client', return_value=dynamodb_mock)
+    mocker.patch.dict(os.environ, {"DYNAMODB_TABLE_NAME": "test-table"})
 
     ret = app.lambda_handler(apigw_event, "")
     data = json.loads(ret["body"])
@@ -70,3 +74,5 @@ def test_lambda_handler(apigw_event, mocker):
     assert ret["statusCode"] == 200
     assert "message" in ret["body"]
     assert data["message"] == "hello world"
+    
+    dynamodb_mock.put_item.assert_called_once()

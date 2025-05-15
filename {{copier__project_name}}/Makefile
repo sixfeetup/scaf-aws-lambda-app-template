@@ -90,6 +90,9 @@ setup: dynamo-up wait-for-dynamodb create-table{% else %}
 setup:
 	pip install -r requirements.txt{% endif %}
 
+test:
+	AWS_SAM_STACK_NAME=$(STACK_NAME) PYTHONPATH=. pytest -v --disable-warnings --tb=short tests
+
 delete-sandbox:
 	sam delete --stack-name $(STACK_NAME)-sandbox
 

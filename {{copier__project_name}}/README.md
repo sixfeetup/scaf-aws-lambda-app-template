@@ -30,18 +30,19 @@ The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI
 ## Running DynamoDB Locally with AWS SAM
 
 Follow these steps to configure and run DynamoDB locally for development:
-1. Start DynamoDB Local setup and create Table
+1. Update `.envrc` file with your AWS credentials.
+2. Start DynamoDB Local setup and create Table
 ```bash
 make setup
 ```
 
-2. Build and Run the API Locally with AWS SAM
+3. Build and Run the API Locally with AWS SAM
 ```bash
 make build
 make local
 ```
 
-3. Hit the API:
+4. Hit the API:
 ```bash
 curl http://localhost:3000/hello
 ```

@@ -52,9 +52,10 @@ def log_next_steps():
         HINT
         + "Next steps:"
         + "\n1. Run 'cd {{ copier__project_name }}' to enter the project directory"
-        + "\n2. Run 'make setup' to run dynamodb locally and create the database"
-        + "\n3. Then run 'make build' to build the lambda function"
-        + "\n4. Then run 'make deploy' to deploy the lambda function" 
+        + "\n2. Update the .envrc file with your AWS credentials"
+        + "\n3. Run 'make setup' to run dynamodb locally and create the database"
+        + "\n4. Then run 'make build' to build the lambda function"
+        + "\n5. Then run 'make deploy' to deploy the lambda function"
         + "\nRefer to README.md for more details."
         + TERMINATOR
     )
