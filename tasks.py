@@ -51,10 +51,10 @@ def log_next_steps():
     print(
         HINT
         + "Next steps:"
-        + "\n1. run 'cd {{ copier__project_name }}' to enter the project directory"
-        + "\n2. run 'make setup' to run dynamodb locally and create the database"
-        + "\n3. then run 'make build' to build the lambda function"
-        + "\n4. then run 'make deploy' to deploy the lambda function" 
+        + "\n1. Run 'cd {{ copier__project_name }}' to enter the project directory"
+        + "\n2. Run 'make setup' to run dynamodb locally and create the database"
+        + "\n3. Then run 'make build' to build the lambda function"
+        + "\n4. Then run 'make deploy' to deploy the lambda function" 
         + "\nRefer to Readme.md for more details."
         + TERMINATOR
     )
