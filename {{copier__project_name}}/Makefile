@@ -91,7 +91,7 @@ setup:
 	pip install -r requirements.txt{% endif %}
 
 test:
-	AWS_SAM_STACK_NAME=$(STACK_NAME) PYTHONPATH=. pytest -v --disable-warnings --tb=short tests
+	AWS_SAM_STACK_NAME=$(STACK_NAME) PYTHONPATH=. uv run --with pytest,boto3,requests,pytest-mock pytest -v --disable-warnings --tb=short tests
 
 delete-sandbox:
 	sam delete --stack-name $(STACK_NAME)-sandbox
