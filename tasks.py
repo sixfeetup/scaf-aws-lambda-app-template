@@ -23,7 +23,7 @@ def run_setup():
     print("Running AWS SAM build and validate...")
     subprocess.run(shlex.split("make validate"))
     subprocess.run(shlex.split("make build"))
-    print("AWS Lambda template setup complete.")
+    print("AWS Lambda template build and setup complete.")
 
 
 def init_git_repo():

@@ -14,7 +14,7 @@ TABLE_NAME ?= RequestsTable-{{copier__stack_name}}
 all: build
 
 build:
-	sam build {% if copier__package_type != "image" %}--use-container{% endif %}
+	sam build {% if copier__package_type != "image" %}--use-container{% endif %} > /dev/null 2>&1
 
 validate:
 	sam validate --lint
