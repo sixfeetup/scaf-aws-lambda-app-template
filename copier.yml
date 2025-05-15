@@ -63,7 +63,7 @@ copier__cloudwatch_monitor:
 
 copier__enable_logs:
   type: bool
-  help: "Would you like to enable monitoring using CloudWatch Application Insights? (y/N) [default: No]"
+  help: "Would you like to enable logging? (y/N) [default: No]"
   default: false
 
 copier__auth:
