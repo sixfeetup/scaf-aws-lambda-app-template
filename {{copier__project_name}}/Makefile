@@ -47,7 +47,7 @@ dynamo-up:
 	else \
 		echo "Starting DynamoDB local container..."; \
 		rm -f .dynamodb-container-id 2>/dev/null || true; \
-		docker run -d --rm --network lambda-local -p 8000:8000 --name dynamodb-local amazon/dynamodb-local:latest -jar DynamoDBLocal.jar -sharedDb > .dynamodb-container-id; \
+		docker run -d --rm --network lambda-local -p 8000:8000 --name {{copier__stack_name}}-dynamodb-local amazon/dynamodb-local:latest -jar DynamoDBLocal.jar -sharedDb > .dynamodb-container-id; \
 		echo "DynamoDB local container started with ID: $$(cat .dynamodb-container-id)"; \
 	fi
 
