@@ -2,7 +2,7 @@
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
-- hello_world - Code for the application's Lambda function{% if copier__package_type == "image" %} and Project Dockerfile{% endif %}.
+- src - Code for the application's Lambda function{% if copier__package_type == "image" %} and Project Dockerfile{% endif %}.
 - events - Invocation events that you can use to invoke the function.
 - tests - Unit tests for the application code. 
 - template.yaml - A template that defines the application's AWS resources.
@@ -25,6 +25,31 @@ The AWS Toolkit is an open source plug-in for popular IDEs that uses the SAM CLI
 * [VS Code](https://docs.aws.amazon.com/toolkit-for-vscode/latest/userguide/welcome.html)
 * [Visual Studio](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/welcome.html)
 {% endif %}
+
+{% if copier__dynamo_db %}
+## Running DynamoDB Locally with AWS SAM
+
+Follow these steps to configure and run DynamoDB locally for development:
+1. Update `.envrc` file with your AWS credentials.
+2. Start DynamoDB Local setup and create Table
+```bash
+make setup
+```
+
+3. Build and Run the API Locally with AWS SAM
+```bash
+make build
+make local
+```
+
+4. Hit the API:
+```bash
+curl http://localhost:3000/hello
+```
+
+You should receive a success response.
+{%- endif %}
+
 ## Deploy the sample application
 
 The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
@@ -41,8 +66,8 @@ You may need the following for local testing.
 To build and deploy your application for the first time, run the following in your shell:
 
 ```bash
-sam build{% if copier__package_type != "image" %} --use-container{% endif %}
-sam deploy --guided
+make build
+make deploy
 ```
 
 {% if copier__package_type == "image" %}
@@ -59,67 +84,6 @@ The first command will build the source of your application. The second command 
 
 You can find your API Gateway Endpoint URL in the output values displayed after deployment.
 
-## Use the SAM CLI to build and test locally
-
-Build your application with the `sam build{% if copier__package_type != "image" %} --use-container{% endif %}` command.
-
-```bash
-{{ copier__project_name }}$ sam build{% if copier__package_type != "image" %} --use-container{% endif %}
-```
-
-{% if copier__package_type == "image" %}
-The SAM CLI builds a docker image from a Dockerfile and then installs dependencies defined in `hello_world/requirements.txt` inside the docker image. The processed template file is saved in the `.aws-sam/build` folder.
-{% else %}
-The SAM CLI installs dependencies defined in `hello_world/requirements.txt`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
-{% endif %}
-
-Test a single function by invoking it directly with a test event. An event is a JSON document that represents the input that the function receives from the event source. Test events are included in the `events` folder in this project.
-
-Run functions locally and invoke them with the `sam local invoke` command.
-
-```bash
-{{ copier__project_name }}$ sam local invoke HelloWorldFunction --event events/event.json
-```
-
-The SAM CLI can also emulate your application's API. Use the `sam local start-api` to run the API locally on port 3000.
-
-```bash
-{{ copier__project_name }}$ sam local start-api
-{{ copier__project_name }}$ curl http://localhost:3000/
-```
-
-The SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
-
-```yaml
-      Events:
-        HelloWorld:
-          Type: Api
-          Properties:
-            Path: /hello
-            Method: get
-```
-{% if copier__dynamo_db %}
-## Running DynamoDB Locally with AWS SAM
-
-Follow these steps to configure and run DynamoDB locally for development:
-1. Start DynamoDB Local setup and create Table
-```bash
-make setup
-```
-
-2. Build and Run the API Locally with AWS SAM
-```bash
-make build
-make local
-```
-
-3. Hit the API:
-```bash
-curl http://localhost:3000/hello
-```
-
-You should receive a success response.
-{%- endif %}
 
 
 ## Add a resource to your application
@@ -138,24 +102,10 @@ To simplify troubleshooting, SAM CLI has a command called `sam logs`. `sam logs`
 You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
 
 ## Tests
-{% if copier__package_type == "image" %}
-Tests are defined in the `tests` folder in this project. Use PIP to install the [pytest](https://docs.pytest.org/en/latest/) and run unit tests from your local machine.
-{% else %}
-Tests are defined in the `tests` folder in this project. Use PIP to install the test dependencies and run tests.
-{% endif %}
+Tests are defined in the `tests` folder in this project. To run the tests:
 
 ```bash
-{% if copier__package_type == "image" %}
-{{ copier__project_name }}$ pip install pytest pytest-mock --user
-{{ copier__project_name }}$ python -m pytest tests/ -v
-{% else %}
-{{ copier__project_name }}$ pip install -r tests/requirements.txt --user
-# unit test
-{{ copier__project_name }}$ python -m pytest tests/unit -v
-# integration test, requiring deploying the stack first.
-# Create the env variable AWS_SAM_STACK_NAME with the name of the stack we are testing
-{{ copier__project_name }}$ AWS_SAM_STACK_NAME="{{ copier__stack_name }}" python -m pytest tests/integration -v
-{% endif %}
+make test
 ```
 
 ## Cleanup
@@ -163,7 +113,7 @@ Tests are defined in the `tests` folder in this project. Use PIP to install the 
 To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
 
 ```bash
-sam delete --stack-name "{{ copier__stack_name }}"
+make delete
 ```
 
 ## Resources

@@ -1,8 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  {{ copier__project_name }}
-
   Sample SAM Template for {{ copier__project_name }}
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -38,7 +36,7 @@ Resources:
   RequestsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: RequestsTable
+      TableName: RequestsTable-{{copier__stack_name}}
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: ip_address
@@ -57,14 +55,12 @@ Resources:
       {% if copier__package_type == "image" %}
       PackageType: Image
       {% else %}
-      CodeUri: ./
+      CodeUri: ./src
       Handler: app.lambda_handler
-      Runtime: {{ copier__runtime }}
+      Runtime: python{{ copier__runtime }}
       {% endif %}
       Architectures:
-      {%- for arch in copier__architectures %}
-      - {{arch}}
-      {%- endfor %}
+        - {{copier__architectures}}
       {% if copier__dynamo_db %}
       Environment:
         Variables:
@@ -80,14 +76,12 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-            {% if copier__auth %}
             RestApiId: !Ref HelloWorldAPI
-            {% endif %}
     {% if copier__package_type == "image" %}
     Metadata:
       Dockerfile: Dockerfile
-      DockerContext: ./
-      DockerTag: python3.13-v1
+      DockerContext: ./src
+      DockerTag: python{{copier__runtime}}-v1
     {% endif %}
   {% if copier__cloudwatch_monitor %}
   ApplicationResourceGroup:
@@ -108,9 +102,9 @@ Resources:
   PassageAuthFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: ./
+      CodeUri: ./src
       Handler: authorizer.handler
-      Runtime: {{ copier__runtime }}
+      Runtime: python{{ copier__runtime }}
       Timeout: 10
       Environment:
         Variables:
@@ -125,18 +119,12 @@ Resources:
   {% endif %}
 
 Outputs:
-  {% if copier__auth %}
-  HelloWorldApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub "https://${HelloWorldAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  {% else %}
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   HelloWorldApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  {% endif %}
+    Value: !Sub "https://${HelloWorldAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
 
   HelloWorldFunction:
     Description: Hello World Lambda Function ARN

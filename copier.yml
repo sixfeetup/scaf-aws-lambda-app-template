@@ -27,20 +27,18 @@ copier__project_name:
 
 copier__runtime:
   type: str
-  default: "python3.11"
+  default: "3.11"
   help: "The python version of your project."
   choices:
-    python3.8: "python3.8"
-    python3.9: "python3.9"
-    python3.10: "python3.10"
-    python3.11: "python3.11"
-    python3.12: "python3.12"
+    "3.9": "3.9"
+    "3.10": "3.10"
+    "3.11": "3.11"
+    "3.12": "3.12"
 
 copier__architectures:
   type: str
   help: "The architecture of your project."
-  default: ["arm64"]
-  multiselect: true
+  default: "arm64"
   choices:
     x86_64: "x86_64"
     arm64: "arm64"
@@ -65,7 +63,7 @@ copier__cloudwatch_monitor:
 
 copier__enable_logs:
   type: bool
-  help: "Would you like to enable monitoring using CloudWatch Application Insights? (y/N) [default: No]"
+  help: "Would you like to enable logging? (y/N) [default: No]"
   default: false
 
 copier__auth:
@@ -78,7 +76,27 @@ copier__dynamo_db:
   help: "Do you want to enable DynamoDB for your project? (y/n) [default: No]"
   default: false
 
+copier__aws_region:
+  type: str
+  default: "us-east-1"
+  help: "The AWS region where your project will be deployed."
+
 copier__stack_name:
   type: str
-  default: "{{ copier__project_name.lower().replace(' ', '-') }}"
+  default: "{{ copier__project_name.lower().replace(' ', '-').replace('_', '-') }}"
   when: false
+
+copier__aws_profile:
+  type: str
+  default: "default"
+  help: "The AWS profile to use for deployment."
+
+copier__repo_url:
+  type: str
+  default: "git@github.com:organization_name/{{ copier__stack_name }}.git"
+  help: "The URL of the repository."
+  validator: >-
+    {% if not copier__repo_url.startswith("git@") or not ":" in copier__repo_url or not "/" in copier__repo_url.split(":")[1] or not ".git" in copier__repo_url %}
+      Value must follow the format git@provider:orgname/repo.git
+    {% endif %}
+
