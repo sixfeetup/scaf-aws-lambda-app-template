@@ -8,6 +8,8 @@ BUILD_DIR ?= .aws-sam/build
 {% if copier__dynamo_db %}
 DYNAMO_ENDPOINT ?= http://localhost:8000
 TABLE_NAME ?= RequestsTable-{{copier__stack_name}}
+CONTAINER_NAME ?= {{copier__stack_name}}-dynamodb-local
+NETWORK_NAME ?= {{copier__stack_name}}-network
 {% endif %}
 
 # Default target
@@ -29,26 +31,25 @@ deploy-sandbox:
 			{% if copier__package_type != "image" %}--resolve-image-repos{% endif %}
 
 local:
-	sam local start-api {% if copier__dynamo_db %}--env-vars env_example.json --docker-network lambda-local{% endif %}
+	sam local start-api {% if copier__dynamo_db %}--env-vars env_example.json --docker-network $(NETWORK_NAME){% endif %}
 
 invoke:
-	sam local invoke HelloWorldFunction --event events/event.json{% if copier__dynamo_db %} --env-vars env_example.json --docker-network lambda-local{% endif %}
+	sam local invoke HelloWorldFunction --event events/event.json{% if copier__dynamo_db %} --env-vars env_example.json --docker-network $(NETWORK_NAME){% endif %}
 
 {% if copier__dynamo_db %}
 dynamo-up:
-	@if [ -z "$$(docker network ls --filter name=^lambda-local$$ -q)" ]; then \
-		echo "Creating Docker network 'lambda-local'..."; \
-		docker network create lambda-local; \
+	@if [ -z "$$(docker network ls --filter name=^$(NETWORK_NAME)$$ -q)" ]; then \
+		echo "Creating Docker network '$(NETWORK_NAME)'..."; \
+		docker network create $(NETWORK_NAME); \
 	else \
-		echo "Docker network 'lambda-local' already exists."; \
+		echo "Docker network '$(NETWORK_NAME)' already exists."; \
 	fi; \
-	if [ -f .dynamodb-container-id ] && [ -n "$$(docker ps -q -f id=$$(cat .dynamodb-container-id 2>/dev/null))" ]; then \
-		echo "DynamoDB local container is already running with ID: $$(cat .dynamodb-container-id)"; \
+	if [ -n "$$(docker ps -q -f name=^/$(CONTAINER_NAME)$$)" ]; then \
+		echo "DynamoDB local container '$(CONTAINER_NAME)' is already running."; \
 	else \
 		echo "Starting DynamoDB local container..."; \
-		rm -f .dynamodb-container-id 2>/dev/null || true; \
-		docker run -d --rm --network lambda-local -p 8000:8000 --name {{copier__stack_name}}-dynamodb-local amazon/dynamodb-local:latest -jar DynamoDBLocal.jar -sharedDb > .dynamodb-container-id; \
-		echo "DynamoDB local container started with ID: $$(cat .dynamodb-container-id)"; \
+		docker run -d --rm --network $(NETWORK_NAME) -p 8000:8000 --name $(CONTAINER_NAME) amazon/dynamodb-local:latest -jar DynamoDBLocal.jar -sharedDb; \
+		echo "DynamoDB local container '$(CONTAINER_NAME)' started."; \
 	fi
 
 wait-for-dynamodb:
@@ -92,6 +93,22 @@ setup:
 
 test:
 	AWS_SAM_STACK_NAME=$(STACK_NAME) PYTHONPATH=. uv run --with pytest,boto3,requests,pytest-mock pytest -v --disable-warnings --tb=short tests
+
+down:
+	@if [ -n "$$(docker ps -q -f name=^/$(CONTAINER_NAME)$$)" ]; then \
+		echo "Stopping DynamoDB local container..."; \
+		docker stop $(CONTAINER_NAME); \
+		echo "DynamoDB local container '$(CONTAINER_NAME)' stopped."; \
+	else \
+		echo "DynamoDB local container '$(CONTAINER_NAME)' is not running."; \
+	fi; \
+	if [ -n "$$(docker network ls --filter name=^$(NETWORK_NAME)$$ -q)" ]; then \
+		echo "Removing Docker network '$(NETWORK_NAME)'..."; \
+		docker network rm $(NETWORK_NAME); \
+		echo "Docker network '$(NETWORK_NAME)' removed."; \
+	else \
+		echo "Docker network '$(NETWORK_NAME)' does not exist."; \
+	fi
 
 delete-sandbox:
 	sam delete --stack-name $(STACK_NAME)-sandbox

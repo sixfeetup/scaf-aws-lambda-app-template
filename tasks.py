@@ -56,6 +56,7 @@ def log_next_steps():
         + "\n3. Run 'make setup' to run dynamodb locally and create the database"
         + "\n4. Then run 'make build' to build the lambda function"
         + "\n5. Then run 'make deploy' to deploy the lambda function"
+        + "\n6. To remove the local setup, run 'make down'"
         + "\nRefer to README.md for more details."
         + TERMINATOR
     )
