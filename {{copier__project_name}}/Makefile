@@ -16,7 +16,7 @@ NETWORK_NAME ?= {{copier__stack_name}}-network
 all: build
 
 build:
-	sam build {% if copier__package_type != "image" %}--use-container{% endif %} > /dev/null 2>&1
+	sam build > /dev/null 2>&1
 
 validate:
 	sam validate --lint
@@ -93,7 +93,7 @@ create-table:
 
 setup: dynamo-up wait-for-dynamodb create-table{% else %}
 setup:
-	pip install -r requirements.txt{% endif %}
+	pip install -r src/requirements.txt{% endif %}
 
 test:
 	AWS_SAM_STACK_NAME=$(STACK_NAME) PYTHONPATH=. uv run --with pytest,boto3,requests,pytest-mock pytest -v --disable-warnings --tb=short tests
