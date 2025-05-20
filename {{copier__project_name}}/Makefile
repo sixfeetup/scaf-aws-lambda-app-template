@@ -47,7 +47,7 @@ dynamo-up:
 	if [ -n "$$(docker ps -q -f name=^/$(CONTAINER_NAME)$$)" ]; then \
 		echo "DynamoDB local container '$(CONTAINER_NAME)' is already running."; \
 	else \
-		if docker ps --format '{{.Ports}}' | grep ':8000->'; then \
+		if docker ps --format "{% raw %}{{.Ports}}{% endraw %}" | grep ':8000->'; then \
 			echo "Error: Port 8000 is already in use by another container. Cannot start DynamoDB local container."; \
 			exit 1; \
 		fi; \
