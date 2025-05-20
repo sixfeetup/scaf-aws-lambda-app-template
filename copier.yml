@@ -73,8 +73,8 @@ copier__auth:
 
 copier__dynamo_db:
   type: bool
-  help: "Do you want to enable DynamoDB for your project? (y/n) [default: No]"
-  default: false
+  help: "Do you want to enable DynamoDB for your project? (y/n) [default: Yes]"
+  default: true
 
 copier__aws_region:
   type: str

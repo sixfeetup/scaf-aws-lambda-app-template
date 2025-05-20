@@ -110,6 +110,12 @@ make test
 
 ## Cleanup
 
+To delete the local setup (i.e container and local network) run the following command:
+
+```bash
+make down
+```
+
 To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
 
 ```bash
