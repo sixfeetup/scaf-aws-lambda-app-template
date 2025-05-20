@@ -1,4 +1,4 @@
-.PHONY: build deploy local clean test setup{% if copier__dynamo_db %} dynamo-up dynamo-down create-table{% endif %}
+.PHONY: build deploy local clean test setup{% if copier__dynamo_db %} dynamo-up dynamo-down wait-for-dynamodb create-table{% endif %}
 
 # Configuration
 STACK_NAME ?= {{ copier__stack_name }}
@@ -47,6 +47,10 @@ dynamo-up:
 	if [ -n "$$(docker ps -q -f name=^/$(CONTAINER_NAME)$$)" ]; then \
 		echo "DynamoDB local container '$(CONTAINER_NAME)' is already running."; \
 	else \
+		if docker ps --format '{{.Ports}}' | grep ':8000->'; then \
+			echo "Error: Port 8000 is already in use by another container. Cannot start DynamoDB local container."; \
+			exit 1; \
+		fi; \
 		echo "Starting DynamoDB local container..."; \
 		docker run -d --rm --network $(NETWORK_NAME) -p 8000:8000 --name $(CONTAINER_NAME) amazon/dynamodb-local:latest -jar DynamoDBLocal.jar -sharedDb; \
 		echo "DynamoDB local container '$(CONTAINER_NAME)' started."; \
