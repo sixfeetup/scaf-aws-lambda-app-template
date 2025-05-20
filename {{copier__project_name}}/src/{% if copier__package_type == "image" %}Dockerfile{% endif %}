@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:{{copier__runtime}}-slim
+FROM public.ecr.aws/lambda/python:{{copier__runtime}}-{{copier__architectures}}
 COPY app.py ${LAMBDA_TASK_ROOT}
 
 # Command can be overwritten by providing a different command in the template directly.
