@@ -46,7 +46,7 @@ dynamo-up:  ## Start a local DynamoDB instance in a Docker container
 	if [ -n "$$(docker ps -q -f name=^/$(CONTAINER_NAME)$$)" ]; then \
 		echo "DynamoDB local container '$(CONTAINER_NAME)' is already running."; \
 	else \
-		echo "Starting DynamoDB local container without exposing port 8000 on host..."; \
+		echo "Starting DynamoDB local container..."; \
 		docker run -d --rm --network $(NETWORK_NAME) --name $(CONTAINER_NAME) amazon/dynamodb-local:latest -jar DynamoDBLocal.jar -sharedDb; \
 		echo "DynamoDB local container '$(CONTAINER_NAME)' started."; \
 	fi
