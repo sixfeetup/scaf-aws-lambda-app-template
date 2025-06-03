@@ -60,7 +60,7 @@ Resources:
       Runtime: python{{ copier__runtime }}
       {% endif %}
       Architectures:
-        - {{copier__architectures}}
+        - "{{copier__architectures}}"
       {% if copier__dynamo_db %}
       Environment:
         Variables:

@@ -20,7 +20,7 @@ def run_setup():
         print("Error: AWS SAM CLI is not installed. Please install it and try again.")
         exit(1)
 
-    print("Running AWS SAM build and validate...")
+    print("Running AWS SAM validate and build...")
     subprocess.run(shlex.split("make validate"))
     subprocess.run(shlex.split("make build"))
     print("AWS Lambda template build and setup complete.")
@@ -52,10 +52,11 @@ def log_next_steps():
         HINT
         + "Next steps:"
         + "\n1. Run 'cd {{ copier__project_name }}' to enter the project directory"
-        + "\n2. Update the .envrc file with your AWS credentials"
-        + "\n3. Run 'make setup' to run dynamodb locally and create the database"
-        + "\n4. Then run 'make build' to build the lambda function"
-        + "\n5. Then run 'make deploy' to deploy the lambda function"
+        + "\n2. Run 'make setup' to run dynamodb locally and create the database"
+        + "\n3. Then run 'make build' to build the lambda function"
+        + "\n4. To run lambda function locally, run 'make local' to invoke the lambda function"
+        + "\n5. To deploy, run 'make deploy' to deploy the lambda function"
+        + "\n6. To remove the local setup, run 'make down'"
         + "\nRefer to README.md for more details."
         + TERMINATOR
     )
