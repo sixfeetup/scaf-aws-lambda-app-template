@@ -5,6 +5,7 @@ STACK_NAME ?= {{ copier__stack_name }}
 REGION ?= {{copier__aws_region}}
 TEMPLATE_FILE ?= template.yaml
 BUILD_DIR ?= .aws-sam/build
+AWS_PROFILE ?= {{copier__aws_profile}}
 {% if copier__dynamo_db %}
 DYNAMO_ENDPOINT ?= http://localhost:8000
 TABLE_NAME ?= RequestsTable-{{copier__stack_name}}
@@ -22,7 +23,7 @@ validate:  ## Validate the SAM template with linting
 	sam validate --lint
 
 deploy:  ## Deploy the stack using interactive guided mode
-	sam deploy --guided --profile {{copier__aws_profile}} \
+	sam deploy --guided --profile $(AWS_PROFILE) \
 	{% if copier__package_type == "image" %}--resolve-image-repos{% endif %}
 
 ## Local Development

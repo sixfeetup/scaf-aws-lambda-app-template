@@ -20,7 +20,7 @@ def run_setup():
         print("Error: AWS SAM CLI is not installed. Please install it and try again.")
         exit(1)
 
-    print("Running AWS SAM build and validate...")
+    print("Running AWS SAM validate and build...")
     subprocess.run(shlex.split("make validate"))
     subprocess.run(shlex.split("make build"))
     print("AWS Lambda template build and setup complete.")
